@@ -1,0 +1,209 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Scan QR untuk Absen</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #86daed, #5eddfd);
+      color: #333;
+    }
+
+    .sidebar {
+      width: 250px;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+      color: #fff;
+      padding: 20px;
+      box-shadow: 2px 0 12px rgba(0, 0, 0, 0.2);
+      z-index: 100;
+    }
+
+    .sidebar h2 {
+      font-size: 1.8rem;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar-menu li {
+      margin: 15px 0;
+    }
+
+    .sidebar-menu a {
+      color: #fff;
+      text-decoration: none;
+      display: block;
+      padding: 10px 15px;
+      border-radius: 8px;
+      transition: background-color 0.3s ease;
+    }
+
+    .sidebar-menu a:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .main-content {
+      margin-left: 250px;
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    h2 {
+      font-weight: bold;
+      margin-bottom: 30px;
+      color: #fff;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+      text-align: center;
+    }
+
+    #qr-reader {
+      margin: 0 auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      max-width: 400px;
+    }
+
+    #qr-reader-results {
+      margin-top: 20px;
+      text-align: center;
+      font-weight: 500;
+      color: #fff;
+    }
+
+    .swal2-popup {
+      font-size: 1.1rem !important;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 20px 10px;
+      }
+
+      #qr-reader {
+        width: 100%;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <h2>Menu Guru</h2>
+    </div>
+    <ul class="sidebar-menu">
+      <li><a href="{% url 'rumahbelajar:dashboard_guru' %}">🏠 Beranda</a></li>
+      <li><a href="{% url 'rumahbelajar:daftar_siswa' %}">📋 Daftar Siswa</a></li>
+      <li><a href="{% url 'rumahbelajar:akademik' %}">📚 Akademik</a></li>
+      <li><a href="{% url 'rumahbelajar:presensi_guru' %}">📝 Presensi Guru</a></li>
+      <li><a href="{% url 'rumahbelajar:presensi_siswa'  %}">📝 Presensi Siswa</a></li>
+      {% if qr_code %}
+        <li><a href="{% url 'rumahbelajar:generate_daily_qrcode' tanggal=qr_code.tanggal %}" class="btn btn-success w-100 text-white">Scan QR Hari Ini</a></li>
+      {% else %}
+        <li><span>❌ QR Code belum dibuat untuk hari ini.</span></li>
+      {% endif %}
+      {% if jadwal_id and pertemuan %}
+        <li><a href="{% url 'rumahbelajar:generate_qr_guru' jadwal_id pertemuan %}">📝 QR Absen</a></li>
+      {% endif %}
+      <li><a href="{% url 'rumahbelajar:login' %}">🚪 Logout</a></li>
+    </ul>
+  </nav>
+
+  <div class="main-content">
+    <h2>Scan QR Code untuk Absen</h2>
+    <div id="qr-reader"></div>
+    <div id="qr-reader-results"></div>
+
+    {% if messages %}
+      <div class="flash-messages" style="display: none;">
+        {% for message in messages %}
+          <div class="flash"
+               data-tag="{{ message.tags }}"
+               data-message="{{ message }}">
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <script>
+    let alreadyScanned = false;
+
+    function onScanSuccess(decodedText, decodedResult) {
+      if (alreadyScanned) return;
+      alreadyScanned = true;
+
+      let url = decodedText;
+      if (!decodedText.startsWith('http://') && !decodedText.startsWith('https://')) {
+        url = `/absensi/${decodedText}/`;
+      }
+
+      fetch(url, {
+        method: 'GET',
+        credentials: 'same-origin',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      })
+      .then(response => response.json())
+      .then(data => {
+        Swal.fire({
+          icon: data.status === 'success' ? 'success' : (data.status === 'info' ? 'info' : 'error'),
+          title: data.message,
+          timer: 3000,
+          timerProgressBar: true,
+          showConfirmButton: false
+        });
+        document.getElementById("qr-reader-results").innerHTML = data.message;
+      })
+      .catch(error => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Gagal memproses QR Code',
+          text: error.toString(),
+          timer: 3000,
+          timerProgressBar: true,
+          showConfirmButton: false
+        });
+      });
+
+      setTimeout(() => {
+        alreadyScanned = false;
+      }, 5000);
+    }
+
+    const html5QrCodeScanner = new Html5QrcodeScanner("qr-reader", {
+      fps: 10,
+      qrbox: 250
+    });
+    html5QrCodeScanner.render(onScanSuccess);
+  </script>
+
+</body>
+</html>

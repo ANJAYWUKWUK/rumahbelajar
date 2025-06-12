@@ -1,0 +1,176 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Scan QR untuk Absen</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f8;
+        }
+
+        .container-fluid {
+            display: flex;
+            flex-direction: row;
+            min-height: 100vh;
+        }
+
+        nav.sidebar {
+            width: 260px;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            padding: 20px;
+            position: fixed;
+            height: 100%;
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+            top: 0;
+            left: 0;
+            z-index: 999;
+        }
+
+        .sidebar h2 {
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            display: block;
+            border-radius: 10px;
+            transition: all 0.3s ease-in-out;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .sidebar a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+
+        .profile {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .profile img {
+            width: 100px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        .profile h4 {
+            margin: 0;
+        }
+
+        .profile h4 a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 40px;
+            margin-left: 260px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .centered-content {
+            text-align: center;
+        }
+
+        .centered-content h1 {
+            color: #3083ff;
+            margin-bottom: 10px;
+        }
+
+        .centered-content h4 {
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .qr-wrapper {
+            margin: 30px 0;
+        }
+
+        .qr-wrapper img {
+            width: 200px;
+            animation: naikTurun 3s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        @keyframes naikTurun {
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .tanggal {
+            color: #3083ff;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard">
+            <nav class="sidebar" id="sidebar">
+                <h2>Admin Panel</h2>
+                <ul>
+                    <li><a href="{% url 'rumahbelajar:dashboard_admin' %}">📊 Dashboard</a></li>
+                    <li><a href="{% url 'rumahbelajar:data_siswa' %}">👨‍🎓 Data Siswa</a></li>
+                    <li><a href="{% url 'rumahbelajar:data_orang_tua' %}">👨‍👩‍👧 Data Orang Tua</a></li>
+                    <li><a href="{% url 'rumahbelajar:data_guru_admin' %}">👩‍🏫 Data Guru</a></li>
+                    <li><a href="{% url 'rumahbelajar:kelas' %}">🏫 Data Kelas</a></li>
+                    <li><a href="{% url 'rumahbelajar:mata_pelajaran_admin' %}">📚 Data Mata Pelajaran</a></li>
+                    <li><a href="{% url 'rumahbelajar:presensi_guru_admin' %}">📝 Presensi Guru</a></li>
+                    <li><a href="{% url 'rumahbelajar:generate_admin_qrcode' %}">📝 QR Code Guru</a></li>
+                    <li><a href="{% url 'rumahbelajar:tambah_presensi' %}">📝 Tambah Presensi</a></li>
+                    <li><a href="{% url 'keuangan:rekap_keuangan' %}">📈 Rekap Keuangan</a></li>
+                    <li><a href="{% url 'rumahbelajar:presensi_siswa_admin' %}">📝 Presensi Siswa</a></li>
+                    <li><a href="{% url 'keuangan:kelola_pembayaran' %}">💰 Kelola Pembayaran</a></li>
+                    <li><a href="{% url 'rumahbelajar:login' %}"><span>🔒</span> Logout</a></li>
+                </ul>
+            
+            </nav>
+
+        <div class="main-content">
+            <div class="centered-content">
+                <h1>📷 QR Code Absensi</h1>
+                <h4>Selamat Pagi!! 🌞<br>Silakan scan QR code di bawah ini untuk melakukan absensi.</h4>
+                <div class="qr-wrapper">
+                    <img src="{{ daily_qr.qrcode.url }}" alt="QR Code {{ daily_qr.tanggal }}" />
+                </div>
+                <p class="tanggal">📅 {{ daily_qr.tanggal|date:"l, d M Y" }}</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

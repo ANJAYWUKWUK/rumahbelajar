@@ -1,0 +1,174 @@
+@startuml
+!theme plain
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam ArrowColor #666666
+skinparam ActivityBackgroundColor #f0f0f0
+skinparam ActivityBorderColor #666666
+skinparam ActivityDiamondBackgroundColor #f0f0f0
+skinparam ActivityDiamondBorderColor #666666
+
+title Sistem Manajemen Sekolah
+
+start
+
+:Login;
+
+if (Role?) then (Owner)
+  :Dashboard Owner;
+  fork
+    :Kelola Admin;
+    fork
+      :Tambah Admin;
+      :Edit Admin;
+      :Hapus Admin;
+    end fork
+    :Kelola Guru;
+    fork
+      :Tambah Guru;
+      :Edit Guru;
+      :Hapus Guru;
+    end fork
+  fork again
+    :Manajemen Keuangan;
+    fork
+      :Lihat Rekapitulasi Keuangan;
+      :Lihat Laporan Bulanan;
+      :Lihat Laporan Tahunan;
+      :Export Laporan;
+    fork again
+      :Validasi Pembayaran;
+      :Konfirmasi Pembayaran;
+      :Tolak Pembayaran;
+    end fork
+  end fork
+else if (Admin)
+  :Dashboard Admin;
+  fork
+    :Manajemen Siswa;
+    fork
+      :Tambah Siswa;
+      :Edit Data Siswa;
+      :Hapus Siswa;
+      :Import Data Siswa;
+    fork again
+      :Kelola Kelas;
+      :Atur Jadwal;
+      :Atur Wali Kelas;
+    end fork
+  fork again
+    :Manajemen Absensi;
+    fork
+      :Input Absensi;
+      :Lihat Rekap Absensi;
+      :Export Data Absensi;
+    fork again
+      :Kelola Izin;
+      :Kelola Sakit;
+    end fork
+  fork again
+    :Manajemen Keuangan;
+    fork
+      :Input Tagihan;
+      :Validasi Pembayaran;
+      :Rekapitulasi Keuangan;
+    fork again
+      :Kelola Pemasukan;
+      :Kelola Pengeluaran;
+    end fork
+  end fork
+else if (Guru)
+  :Dashboard Guru;
+  fork
+    :Manajemen Absensi;
+    fork
+      :Input Absensi Harian;
+      :Lihat Rekap Absensi;
+      :Input Izin/Sakit;
+    fork again
+      :Lihat Statistik Kehadiran;
+      :Export Data Absensi;
+    end fork
+  fork again
+    :Manajemen Akademik;
+    fork
+      :Input Nilai;
+      :Edit Nilai;
+      :Lihat Rapor;
+    fork again
+      :Lihat Jadwal Mengajar;
+      :Lihat Daftar Siswa;
+    end fork
+  fork again
+    :Profil Siswa;
+    fork
+      :Lihat Data Siswa;
+      :Lihat Riwayat Nilai;
+      :Lihat Riwayat Absensi;
+    end fork
+  end fork
+else if (Orang Tua)
+  :Dashboard Orang Tua;
+  fork
+    :Manajemen Keuangan;
+    fork
+      :Lihat Tagihan;
+      :Upload Bukti Pembayaran;
+      :Lihat Riwayat Pembayaran;
+    fork again
+      :Lihat Rekap Keuangan;
+      :Download Bukti Bayar;
+    end fork
+  fork again
+    :Monitoring Anak;
+    fork
+      :Lihat Absensi;
+      :Lihat Nilai;
+      :Lihat Jadwal;
+    fork again
+      :Lihat Rapor;
+      :Lihat Statistik;
+    end fork
+  fork again
+    :Profil;
+    fork
+      :Edit Profil;
+      :Ganti Password;
+      :Lihat Notifikasi;
+    end fork
+  end fork
+else (Siswa)
+  :Dashboard Siswa;
+  fork
+    :Akademik;
+    fork
+      :Lihat Nilai;
+      :Lihat Rapor;
+      :Lihat Jadwal;
+    fork again
+      :Lihat Absensi;
+      :Lihat Statistik;
+    end fork
+  fork again
+    :Keuangan;
+    fork
+      :Lihat Tagihan;
+      :Lihat Riwayat Bayar;
+      :Download Bukti Bayar;
+    end fork
+  fork again
+    :Profil;
+    fork
+      :Lihat Profil;
+      :Edit Profil;
+      :Ganti Password;
+    end fork
+  end fork
+end
+
+:Logout;
+
+stop
+
+@enduml 

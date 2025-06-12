@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Data Orang Tua</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(120deg, #f0f8ff, #e6f7ff);
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav.sidebar {
+            width: 260px;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            padding: 20px;
+            position: fixed;
+            height: 100%;
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+            top: 0;
+            left: 0;
+            z-index: 999;
+        }
+
+        .sidebar h2 {
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            display: block;
+            border-radius: 10px;
+            transition: all 0.3s ease-in-out;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .sidebar a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-left: 300px; /* agar tidak tertutup sidebar */
+        }
+
+        h2 {
+            text-align: center;
+            color: #007acc;
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        textarea {
+            width: 100%;
+            padding: 10px 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            transition: border 0.3s ease;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #007acc;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007acc;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #005f99;
+        }
+    </style>
+</head>
+<body>
+    <nav class="sidebar">
+        <h2>Admin Panel</h2>
+        <ul>
+            <li><a href="{% url 'rumahbelajar:dashboard_admin' %}">📊 Dashboard</a></li>
+            <li><a href="{% url 'rumahbelajar:data_siswa' %}">👨‍🎓 Data Siswa</a></li>
+            <li><a href="{% url 'rumahbelajar:data_orang_tua' %}">👨‍👩‍👧 Data Orang Tua</a></li>
+            <li><a href="{% url 'rumahbelajar:data_guru_admin' %}">👩‍🏫 Data Guru</a></li>
+            <li><a href="{% url 'rumahbelajar:kelas' %}">🏫 Data Kelas</a></li>
+            <li><a href="{% url 'rumahbelajar:mata_pelajaran_admin' %}">📚 Data Mata Pelajaran</a></li>
+            <li><a href="{% url 'rumahbelajar:presensi_guru_admin' %}">📝 Presensi Guru</a></li>
+            <li><a href="{% url 'rumahbelajar:generate_admin_qrcode' %}">📝 QR Code Guru</a></li>
+            <li><a href="{% url 'rumahbelajar:tambah_presensi' %}">📝 Tambah Presensi</a></li>
+            <li><a href="{% url 'keuangan:rekap_keuangan' %}">📈 Rekap Keuangan</a></li>
+            <li><a href="{% url 'rumahbelajar:presensi_siswa_admin' %}">📝 Presensi Siswa</a></li>
+            <li><a href="{% url 'keuangan:kelola_pembayaran' %}">💰 Kelola Pembayaran</a></li>
+            <li><a href="{% url 'rumahbelajar:login' %}">🔒 Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="container" data-aos="fade-up">
+        <h2>Edit Data Orang Tua</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <label for="nama">Nama:</label>
+            <input type="text" name="nama" id="nama" value="{{ orang_tua.nama }}" required>
+
+            <label for="no_telp">No. Telepon:</label>
+            <input type="text" name="no_telp" id="no_telp" value="{{ orang_tua.no_telp }}" required>
+
+            <label for="alamat">Alamat:</label>
+            <textarea name="alamat" id="alamat" rows="4" required>{{ orang_tua.alamat }}</textarea>
+
+            <label for="username">Username:</label>
+            <input type="text" name="username" id="username" value="{{ orang_tua.user.username }}">
+
+            <label for="password">Password Baru (opsional):</label>
+            <input type="password" name="password" id="password">
+
+            <button type="submit">Simpan Perubahan</button>
+        </form>
+    </div>
+
+    <!-- AOS JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+    </script>
+</body>
+</html>

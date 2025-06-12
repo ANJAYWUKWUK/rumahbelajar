@@ -1,30 +1,90 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Rumah Belajar</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <style>
-    .hero {
-      background: linear-gradient(135deg, #4e54c8, #8f94fb);
-      color: white;
-      padding: 100px 20px;
-      text-align: center;
+    .contact-section h4 {
+  font-weight: bold;
+  }
+
+.contact-section p i {
+  color: #0b3c5d;
+  margin-right: 8px;
+  }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
     }
+
+    .navbar {
+      backdrop-filter: blur(10px);
+    }
+
+    .hero {
+      background-color: #0b3c5d;
+      color: white;
+      padding: 80px 20px;
+      background-image: url('https://cdn-icons-png.flaticon.com/512/3135/3135755.png');
+      background-repeat: no-repeat;
+      background-position: right bottom;
+      background-size: 180px;
+    }
+
+    @media (max-width: 768px) {
+      .hero {
+        background-image: none;
+        padding: 60px 20px;
+        text-align: center;
+      }
+      .hero h1 {
+        font-size: 2rem;
+      }
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: bold;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      margin-top: 15px;
+    }
+
+    .btn-primary {
+      background-color: #ff8c42;
+      border: none;
+    }
+
     .features {
       padding: 60px 20px;
+      background-color: #fdfdfd;
     }
+
     .feature-card {
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      border-radius: 10px;
+      background-color: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      padding: 30px 20px;
       transition: transform 0.3s ease;
+      height: 100%;
     }
+
     .feature-card:hover {
-      transform: translateY(-5px);
+      transform: translateY(-8px);
     }
+
+    .feature-icon {
+      font-size: 40px;
+      margin-bottom: 15px;
+    }
+
     footer {
-      background-color: #f8f9fa;
+      background-color: #f1f1f1;
       text-align: center;
       padding: 20px 0;
       margin-top: 60px;
@@ -34,7 +94,7 @@
 <body>
 
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
     <div class="container">
       <a class="navbar-brand fw-bold" href="#">Rumah Belajar</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
@@ -44,9 +104,10 @@
         <ul class="navbar-nav ms-auto">
           <li class="nav-item"><a class="nav-link" href="#">Beranda</a></li>
           <li class="nav-item"><a class="nav-link" href="#">Tentang</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Program</a></li>
+          <li class="nav-item"><a class="nav-link" href="#program">Program</a></li>
+          <li class="nav-item"><a class="nav-link" href="#kontak">Kontak</a></li>
+          <li class="nav-item"><a class="nav-link" href="#pendaftaran">Pendaftaran</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'rumahbelajar:login' %}">Login</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'rumahbelajar:logout' %}">Kontak</a></li>
           
         </ul>
       </div>
@@ -54,11 +115,15 @@
   </nav>
 
   <!-- Hero Section -->
-  <section class="hero">
+  <section class="hero d-flex align-items-center" style="min-height: 100vh;">
     <div class="container">
-      <h1 class="display-4 fw-bold">Selamat Datang di Rumah Belajar</h1>
-      <p class="lead mt-3">Bimbel terbaik untuk membantu kamu meraih prestasi akademik!</p>
-      <a href="#program" class="btn btn-light mt-4 px-4 py-2">Lihat Program Kami</a>
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <h1 class="display-4">Selamat Datang di Rumah Belajar Bersama</h1>
+          <p>Bimbel terbaik untuk membantu kamu meraih prestasi akademik!</p>
+          <a href="#program" class="btn btn-primary mt-4 px-4 py-2">Lihat Program Kami</a>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -67,20 +132,23 @@
     <div class="container">
       <h2 class="mb-5 fw-bold">Program Unggulan</h2>
       <div class="row g-4">
-        <div class="col-md-4">
-          <div class="p-4 bg-white feature-card">
+        <div class="col-md-4 col-sm-6">
+          <div class="feature-card h-100">
+            <div class="feature-icon">🎓</div>
             <h5 class="fw-bold">Bimbel SD - SMA</h5>
             <p>Belajar intensif dari guru terbaik untuk semua jenjang pendidikan.</p>
           </div>
         </div>
-        <div class="col-md-4">
-          <div class="p-4 bg-white feature-card">
+        <div class="col-md-4 col-sm-6">
+          <div class="feature-card h-100">
+            <div class="feature-icon">📝</div>
             <h5 class="fw-bold">Try Out & Simulasi</h5>
             <p>Latihan soal dan simulasi ujian untuk persiapan UN, UTBK, dan lainnya.</p>
           </div>
         </div>
-        <div class="col-md-4">
-          <div class="p-4 bg-white feature-card">
+        <div class="col-md-4 col-sm-12">
+          <div class="feature-card h-100">
+            <div class="feature-icon">🌐</div>
             <h5 class="fw-bold">Kelas Online & Offline</h5>
             <p>Pilih metode belajar yang fleksibel sesuai kebutuhan kamu.</p>
           </div>
@@ -88,6 +156,47 @@
       </div>
     </div>
   </section>
+
+  <!-- Contact Section -->
+  <section class="contact-section py-5 bg-light" id="kontak">
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-md-6">
+        <h4 class="mb-3">Hubungi Kami</h4>
+        <p><i class="bi bi-geo-alt-fill"></i> Jl. Contoh No.123, Kota Contoh</p>
+        <p><i class="bi bi-envelope-fill"></i> info@rumahbelajar.id</p>
+        <p><i class="bi bi-telephone-fill"></i> 0812-3456-7890</p>
+        <iframe
+          src="https://www.google.com/maps/embed?pb=..."
+          width="100%" height="250" style="border:0; border-radius: 10px;" allowfullscreen="" loading="lazy">
+        </iframe>
+      </div>
+      <div class="col-md-6">
+        <h4 class="mb-3">Kirim Pesan</h4>
+        <form>
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="nama" placeholder="Nama Anda">
+            <label for="nama">Nama Anda</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="email" placeholder="Email Anda">
+            <label for="email">Email Anda</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="subjek" placeholder="Subjek">
+            <label for="subjek">Subjek</label>
+          </div>
+          <div class="form-floating mb-3">
+            <textarea class="form-control" placeholder="Tulis pesan..." id="pesan" style="height: 150px;"></textarea>
+            <label for="pesan">Pesan</label>
+          </div>
+          <button type="submit" class="btn btn-primary px-4 py-2">Kirim</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
 
   <!-- Footer -->
   <footer>

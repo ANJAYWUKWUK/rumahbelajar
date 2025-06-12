@@ -102,12 +102,11 @@
 <div class="sidebar">
     <div class="sidebar-header">Menu Orang Tua</div>
     <ul class="sidebar-menu">
-        <li><a href="{% url 'rumahbelajar:home' %}">🏠 Beranda</a></li>
-        <li><a href="{% url 'rumahbelajar:akademik_siswa' %}">👨‍👧 Akademik Anak</a></li>  
-        <li><a href="#">👨‍👧 Presensi Anak</a></li>  
-        <li><a href="#"><span>💳</span> Tagihan</a></li>
-        <li><a href="#"><span>📞</span> Kontak</a></li>
-        <li><a href="#"><span>🔒</span> Logout</a></li>
+        <li><a href="{% url 'rumahbelajar:dashboard_OrangTua' %}">🏠 Beranda</a></li>
+        <li><a href="{% url 'rumahbelajar:akademik_anak' %}">👨‍👧 Akademik Anak</a></li>  
+        <li><a href="{% url 'rumahbelajar:pilih_anak' %}">👨‍👧 Presensi Anak</a></li>  
+        <li><a href="{% url 'keuangan:tagihan_spp_orangtua' %}"><span>💳</span> Tagihan</a></li>
+        <li><a href="{% url 'rumahbelajar:login' %}"><span>🔒</span> Logout</a></li> 
     </ul>
 </div>
 
@@ -118,7 +117,7 @@
     </div>
 
     <div class="dashboard-overview">
-        <div class="card clickable" onclick="location.href='{% url 'rumahbelajar:akademik_siswa' %}'">
+        <div class="card clickable" onclick="location.href='{% url 'rumahbelajar:akademik_anak' %}'">
             <h3>👧 Anak-Anak Anda</h3>
         </div>
 

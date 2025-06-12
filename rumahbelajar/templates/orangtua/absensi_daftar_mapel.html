@@ -1,0 +1,147 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Mata Pelajaran</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            display: flex;
+            min-height: 100vh;
+            background: #fef9f4;
+            color: #333;
+        }
+
+         .sidebar {
+            width: 260px;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            padding: 20px;
+            position: fixed;
+            height: 100%;
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+        }
+        .sidebar-header {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+        .sidebar-menu {
+            list-style: none;
+        }
+        .sidebar-menu li {
+            margin: 15px 0;
+        }
+        .sidebar-menu li a {
+            text-decoration: none;
+            color: white;
+            padding: 10px 15px;
+            display: block;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease-in-out;
+        }
+        .sidebar-menu li a:hover {
+            background-color: rgba(255,255,255,0.2);
+            transform: translateX(5px);
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 40px;
+            flex: 1;
+        }
+
+        .main-header h1 {
+            font-size: 2rem;
+            color: #1e3a8a;
+            margin-bottom: 30px;
+        }
+
+        .mata-pelajaran-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .mapel-card {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: 0.3s;
+            text-align: center;
+            text-decoration: none;
+            color: #1e3a8a;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .mapel-card:hover {
+            background-color: #e8f0ff;
+            transform: translateY(-5px);
+        }
+
+        .mapel-card span {
+            font-size: 1.8rem;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .main-content {
+                margin-left: 0;
+                margin-top: 20px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="sidebar-header">Menu Orang Tua</div>
+    <ul class="sidebar-menu">
+        <li><a href="{% url 'rumahbelajar:dashboard_OrangTua' %}">🏠 Beranda</a></li>
+        <li><a href="{% url 'rumahbelajar:akademik_anak' %}">👨‍👧 Akademik Anak</a></li>  
+        <li><a href="{% url 'rumahbelajar:pilih_anak' %}">👨‍👧 Presensi Anak</a></li>  
+        <li><a href="{% url 'keuangan:tagihan_spp_orangtua' %}">💳 Tagihan</a></li>
+        <li><a href="{% url 'rumahbelajar:login' %}">🔒 Logout</a></li>
+    </ul>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+    <div class="main-header">
+        <h1>📖 Pilih Mata Pelajaran</h1>
+    </div>
+
+    <div class="mata-pelajaran-list">
+        {% for mapel in mata_pelajaran_list %}
+            <a href="{% url 'rumahbelajar:absensi_detail_orangtua' mapel.id siswa.id %}" class="mapel-card">
+                <span>📘</span>
+                {{ mapel.nama_pelajaran }}
+            </a>
+        {% endfor %}
+    </div>
+</div>
+
+</body>
+</html>

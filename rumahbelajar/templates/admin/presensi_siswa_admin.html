@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Presensi Siswa - Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f8;
+        }
+
+        .container-fluid {
+            display: flex;
+            flex-direction: row;
+            min-height: 100vh;
+        }
+
+        nav.sidebar {
+            width: 260px;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            padding: 20px;
+            position: fixed;
+            height: 100%;
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+            top: 0;
+            left: 0;
+            z-index: 999;
+        }
+
+        .sidebar h2 {
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            display: block;
+            border-radius: 10px;
+            transition: all 0.3s ease-in-out;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .sidebar a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+
+        .main-content {
+            margin-left: 260px;
+            flex: 1;
+            padding: 40px 20px;
+        }
+
+        .header {
+            background-color: #ffffff;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1e3a8a;
+            margin-bottom: 30px;
+            border-radius: 10px;
+        }
+
+        .table-responsive {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .filter-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .badge {
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .badge-hadir {
+            background-color: #10b981;
+            color: white;
+        }
+
+        .badge-izin {
+            background-color: #f59e0b;
+            color: white;
+        }
+
+        .badge-sakit {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .badge-tanpa-keterangan {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .table th {
+            background-color: #1e3a8a;
+            color: white;
+            font-weight: 500;
+            padding: 12px;
+        }
+
+        .table td {
+            padding: 12px;
+            vertical-align: middle;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            font-weight: 500;
+        }
+
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <h2>Admin Panel</h2>
+      <ul>
+        <li><a href="{% url 'rumahbelajar:dashboard_admin' %}">📊 Dashboard</a></li>
+        <li><a href="{% url 'rumahbelajar:data_siswa' %}">👨‍🎓 Data Siswa</a></li>
+        <li><a href="{% url 'rumahbelajar:data_orang_tua' %}">👨‍👩‍👧 Data Orang Tua</a></li>
+        <li><a href="{% url 'rumahbelajar:data_guru_admin' %}">👩‍🏫 Data Guru</a></li>
+        <li><a href="{% url 'rumahbelajar:kelas' %}">🏫 Data Kelas</a></li>
+        <li><a href="{% url 'rumahbelajar:mata_pelajaran_admin' %}">📚 Data Mata Pelajaran</a></li>
+        <li><a href="{% url 'rumahbelajar:presensi_guru_admin' %}">📝 Presensi Guru</a></li>
+        <li><a href="{% url 'rumahbelajar:generate_admin_qrcode' %}">📝 QR Code Guru</a></li>
+        <li><a href="{% url 'rumahbelajar:tambah_presensi' %}">📝 Tambah Presensi</a></li>
+        <li><a href="{% url 'keuangan:rekap_keuangan' %}">📈 Rekap Keuangan</a></li>
+        <li><a href="{% url 'rumahbelajar:presensi_siswa_admin' %}">📝 Presensi Siswa</a></li>
+        <li><a href="{% url 'keuangan:kelola_pembayaran' %}">💰 Kelola Pembayaran</a></li>
+        <li><a href="{% url 'rumahbelajar:login' %}"><span>🔒</span> Logout</a></li>
+      </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">Presensi Siswa Rumah Belajar Bersama</div>
+
+            <!-- Filter Section -->
+ <!-- Filter Section -->
+<form method="get" class="filter-section">
+    <input type="date" name="tanggal" class="form-control" style="width: 200px;" value="{{ today }}">
+    
+    <select name="kelas" class="form-select" style="width: 200px;">
+        <option value="">Semua Kelas</option>
+        {% for kelas in kelas_list %}
+            <option value="{{ kelas }}" {% if kelas == selected_kelas %}selected{% endif %}>Kelas {{ kelas }}</option>
+        {% endfor %}
+    </select>
+    
+    <input type="text" name="nama" class="form-control" style="width: 200px;" placeholder="Cari nama siswa..." value="{{ search_nama }}">
+    
+    <button type="submit" class="btn btn-primary">Filter</button>
+    <a href="?tanggal={{ today }}{% if selected_kelas %}&kelas={{ selected_kelas }}{% endif %}{% if search_nama %}&nama={{ search_nama }}{% endif %}" class="btn btn-success">Export Excel</a>
+    <a href="?tanggal={{ today }}{% if selected_kelas %}&kelas={{ selected_kelas }}{% endif %}{% if search_nama %}&nama={{ search_nama }}{% endif %}" class="btn btn-danger">Export PDF</a>
+</form>
+
+            <!-- Table -->
+            <div class="table-responsive">
+                <div class="d-flex justify-content-between mb-3">
+                    <h5 class="fw-bold">Tabel Presensi Siswa</h5>
+                </div>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama Siswa</th>
+                            <th>Kelas</th>
+                            <th>Mata Pelajaran</th>
+                            <th>Waktu Presensi</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for data in presensi_siswa_list %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ data.siswa.nama }}</td>
+                            <td>{{ data.siswa.kelas.nama }}</td>
+                            <td>{{ data.presensi.mata_pelajaran.nama_pelajaran }}</td>
+                            <td>{{ data.waktu_presensi|date:"d/m/Y H:i" }}</td>
+                            <td>
+                                <span class="badge {% if data.status == 'Hadir' %}badge-hadir{% else %}badge-tanpa-keterangan{% endif %}">
+                                    {{ data.status }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">Tidak ada data presensi tersedia</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

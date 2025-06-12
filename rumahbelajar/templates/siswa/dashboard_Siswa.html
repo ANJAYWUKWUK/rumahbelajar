@@ -227,11 +227,13 @@ footer {
             <h2>Menu Siswa</h2>
         </div>
         <ul class="sidebar-menu">
-            <li><a href="{% url 'rumahbelajar:home' %}">🏠 Beranda</a></li>
+            <li><a href="{% url 'rumahbelajar:dashboard_Siswa' %}">🏠 Beranda</a></li>
             <li><a href="{% url 'rumahbelajar:akademik_siswa' %}">📚 Akademik</a></li>
             <li><a href="{% url 'rumahbelajar:absensi_siswa' %}">📝 Presensi</a></li>
-            <li><a href="{% url 'keuangan:tagihan_spp' %}">💰 Keuangan</a></li>
+            <li><a href="{% url 'keuangan:tagihan_spp_siswa' %}">💰 Keuangan</a></li>
             <li><a href="{% url 'rumahbelajar:logout' %}">🚪 Logout</a></li>
+            
+            
         </ul>
     </nav>
 

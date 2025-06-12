@@ -1,0 +1,18 @@
+{% load humanize %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Slip Gaji {{ guru.nama }}</title>
+</head>
+<body>
+    <h1>Slip Gaji</h1>
+    <p>Nama: {{ guru.nama }}</p>
+    <p>NIP: {{ guru.nip }}</p>
+    <p>Jabatan: {{ guru.jabatan }}</p>
+    <p>Golongan: {{ guru.gol }}</p>
+    <p>No Rekening: {{ guru.no_rekening }}</p>
+    <p>Nominal Gaji: Rp {{ guru.nominal_gaji|intcomma }}</p>
+    <p>Bulan: {{ guru.bulan }}</p>
+    <p>Tahun: {{ guru.tahun }}</p>
+</body>
+</html>

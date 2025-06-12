@@ -1,0 +1,198 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Orang Tua - Akademik Anak</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            background-color: #f5f7fa;
+            height: 100vh;
+            overflow-x: hidden;
+        }
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            padding: 20px;
+            position: fixed;
+            height: 100%;
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+        }
+        .sidebar-header {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+        .sidebar-menu {
+            list-style: none;
+        }
+        .sidebar-menu li {
+            margin: 15px 0;
+        }
+        .sidebar-menu li a {
+            text-decoration: none;
+            color: white;
+            padding: 10px 15px;
+            display: block;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease-in-out;
+        }
+        .sidebar-menu li a:hover {
+            background-color: rgba(255,255,255,0.2);
+            transform: translateX(5px);
+        }
+        .main-content {
+            margin-left: 260px;
+            padding: 40px;
+            flex-grow: 1;
+            overflow-y: auto;
+            height: 100vh;
+        }
+        .main-header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            color: #1e3a8a;
+        }
+        .card {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table thead tr {
+            background-color: #3b82f6;
+            color: white;
+        }
+        table th, table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .badge-info {
+            background-color: #3b82f6;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+        .alert-info {
+            background-color: #dbeafe;
+            color: #2563eb;
+        }
+        .alert-danger {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+        .toggle-btn {
+            margin-top:10px;
+            padding:8px 15px;
+            background:#3b82f6;
+            color:white;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+            font-weight: 500;
+        }
+        .toggle-btn:hover {
+            background: #2563eb;
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="sidebar-header">Menu Orang Tua</div>
+    <ul class="sidebar-menu">
+        <li><a href="{% url 'rumahbelajar:dashboard_OrangTua' %}">🏠 Beranda</a></li>
+        <li><a href="{% url 'rumahbelajar:akademik_anak' %}">👨‍👧 Akademik Anak</a></li>  
+        <li><a href="{% url 'rumahbelajar:pilih_anak' %}">👨‍👧 Presensi Anak</a></li>  
+        <li><a href="{% url 'keuangan:tagihan_spp_orangtua' %}"><span>💳</span> Tagihan</a></li>
+        <li><a href="{% url 'rumahbelajar:login' %}"><span>🔒</span> Logout</a></li>
+    </ul>
+</div>
+
+<div class="main-content">
+    <div class="main-header">
+        <h1>Akademik Anak Anda</h1>
+    </div>
+
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% else %}
+        {% for data in siswa_data %}
+            <div class="card">
+                <h3>Informasi Anak</h3>
+                <p><strong>Nama:</strong> {{ data.siswa.nama }}</p>
+                <p><strong>Kelas:</strong> {{ data.kelas.nama|default:"Belum ditentukan" }}</p>
+                <p><strong>Jenis Kelamin:</strong> {{ data.siswa.jenis_kelamin }}</p>
+                <p><strong>Tanggal Lahir:</strong> {{ data.siswa.tanggal_lahir|date:"d F Y" }}</p>
+
+                <button class="toggle-btn" onclick="toggleMapel('mapel-{{ forloop.counter }}')">
+                    📚 Lihat Mata Pelajaran
+                </button>
+
+                <div id="mapel-{{ forloop.counter }}" style="display:none; margin-top:20px;">
+                    {% if data.mata_pelajaran_list %}
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Kode</th>
+                                    <th>Mata Pelajaran</th>
+                                    <th>Kelas</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for mapel in data.mata_pelajaran_list %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ mapel.kode_pelajaran }}</td>
+                                    <td>{{ mapel.nama_pelajaran }}</td>
+                                    <td><span class="badge-info">{{ mapel.kelas.nama }}</span></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="alert alert-info">Belum ada mata pelajaran untuk kelas ini.</div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+<script>
+function toggleMapel(id) {
+    const el = document.getElementById(id);
+    if (el.style.display === "none" || el.style.display === "") {
+        el.style.display = "block";
+    } else {
+        el.style.display = "none";
+    }
+}
+</script>
+
+</body>
+</html>

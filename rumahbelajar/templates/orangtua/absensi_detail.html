@@ -1,0 +1,219 @@
+{% load dict_extras %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detail Presensi - {{ jadwal.mapel.nama }} | Tahun {{ year }}</title>
+    <style>
+        /* Reset & Layout */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #e8f1fa;
+            display: flex;
+            min-height: 100vh;
+            color: #111827;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            padding: 20px;
+            position: fixed;
+            height: 100vh;
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin: 15px 0;
+        }
+
+        .sidebar-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            display: block;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .sidebar-menu a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            padding: 40px;
+            flex: 1;
+        }
+
+        .main-header .title {
+            background-color: #2196f3;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px 10px 0 0;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            margin: 10px 0 30px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        /* Card Style */
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .info-block {
+            width: 45%;
+        }
+
+        .info-block ul {
+            padding-left: 18px;
+            list-style: disc;
+        }
+
+        /* Status Styles */
+        .status-hadir {
+            color: green;
+            font-weight: bold;
+        }
+
+        .status-absen,
+        .status-belum {
+            color: red;
+            font-weight: bold;
+        }
+
+        /* Messages */
+        .messages {
+            margin: 20px 0;
+        }
+
+        .messages .error {
+            color: red;
+        }
+
+        .messages .success {
+            color: green;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .info-block {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">Menu Orang Tua</div>
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'rumahbelajar:dashboard_OrangTua' %}">🏠 Beranda</a></li>
+            <li><a href="{% url 'rumahbelajar:akademik_anak' %}">👨‍👧 Akademik Anak</a></li>
+            <li><a href="{% url 'rumahbelajar:pilih_anak' %}">👨‍👧 Presensi Anak</a></li>
+            <li><a href="{% url 'keuangan:tagihan_spp_orangtua' %}">💳 Tagihan</a></li>
+            <li><a href="{% url 'rumahbelajar:login' %}">🔒 Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="main-header">
+            <div class="title">Absensi Anak Anda </div>
+            <p class="subtitle">Tahun: {{ year }}</p>
+        </div>
+
+        <!-- Messages -->
+        <div class="messages">
+            {% for message in messages %}
+                <div class="{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+
+        <!-- Presensi Cards -->
+        {% for pertemuan_num in total_pertemuan %}
+        <div class="card">
+            <div class="info-row">
+                <div class="info-block">
+                    <strong>Jadwal Les</strong>
+                    <ul>
+                        <li>Pertemuan Ke - {{ pertemuan_num }}</li>
+                    </ul>
+                </div>
+                <div class="info-block">
+                    <strong>Status Presensi</strong>
+                    <ul>
+                        {% if status_pertemuan|default:""|has_key:pertemuan_num %}
+                            {% with status_pertemuan|get_item:pertemuan_num as status %}
+                                {% if status == 'Hadir' %}
+                                    <li class="status-hadir">Hadir</li>
+                                {% else %}
+                                    <li class="status-absen">{{ status }}</li>
+                                {% endif %}
+                                <li>{{ presensi_waktu|get_item:pertemuan_num|date:"d M Y" }}</li>
+                                <li>{{ presensi_waktu|get_item:pertemuan_num|date:"H:i" }} WIB</li>
+                            {% endwith %}
+                        {% else %}
+                            <li class="status-belum">Belum Absen</li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</body>
+</html>

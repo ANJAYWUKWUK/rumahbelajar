@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Presensi Siswa</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      height: 100vh;
+      background: #f3f4f6;
+      color: #111827;
+      overflow-x: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+      color: white;
+      padding: 20px;
+      position: fixed;
+      height: 100%;
+      transition: all 0.4s ease-in-out;
+      z-index: 100;
+      box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .sidebar-header h2 {
+      font-size: 1.8rem;
+      text-align: center;
+      margin-bottom: 30px;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .sidebar-menu li {
+      margin: 15px 0;
+      position: relative;
+    }
+
+    .sidebar-menu a {
+      color: white;
+      text-decoration: none;
+      padding: 10px 15px;
+      display: block;
+      border-radius: 10px;
+      transition: all 0.3s ease-in-out;
+      font-weight: 500;
+    }
+
+    .sidebar-menu a:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      transform: translateX(5px);
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 260px;
+      padding: 40px;
+      flex: 1;
+      animation: fadeInMain 0.8s ease-in-out;
+    }
+
+    @keyframes fadeInMain {
+      0% {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .main-header h1 {
+      font-size: 2.2rem;
+      color: #1e3a8a;
+      margin-bottom: 15px;
+      animation: slideInLeft 0.7s ease-in-out;
+    }
+
+    @keyframes slideInLeft {
+      0% {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .card {
+      border-radius: 10px;
+      padding: 20px;
+      background: white;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .table th {
+      background-color: #1e3a8a;
+      color: white;
+    }
+
+    .status-btn {
+      width: 100px;
+    }
+
+    .status-btn.hadir {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .status-btn.tidak-hadir {
+      background-color: #F44336;
+      color: white;
+    }
+
+    .detail-presensi {
+      display: none;
+    }
+
+    footer {
+      text-align: center;
+      color: #6b7280;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <h2>Menu Guru</h2>
+    </div>
+    <ul class="sidebar-menu">
+      <li><a href="{% url 'rumahbelajar:dashboard_guru' %}">🏠 Beranda</a></li>
+      <li><a href="{% url 'rumahbelajar:daftar_siswa' %}">📋 Daftar Siswa</a></li>
+      <li><a href="{% url 'rumahbelajar:akademik' %}">📚 Akademik</a></li>
+      <li><a href="{% url 'rumahbelajar:presensi_guru' %}">📝 Presensi Guru</a></li>
+      <li><a href="{% url 'rumahbelajar:presensi_siswa' %}">📝 Presensi Siswa</a></li>
+      <li><a href="{% url 'rumahbelajar:login' %}">🚪 Logout</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <header class="main-header">
+      <h1>Hai, {{ request.user.username }} 👋</h1>
+      <p>Selamat datang di halaman Presensi Siswa.</p>
+    </header>
+
+    <!-- Presensi List -->
+    <div class="card mb-4">
+      <h3 class="mb-3">📝 Daftar Presensi</h3>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Mata Pelajaran</th>
+            <th>Kelas</th>
+            <th>Hari</th>
+            <th>Jam</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for presensi in presensi_siswa_list %}
+          <tr>
+            <td>{{ presensi.mata_pelajaran }}</td>
+            <td>{{ presensi.kelas }}</td>
+            <td>{{ presensi.hari }}</td>
+            <td>{{ presensi.jam }}</td>
+            <td>
+              <a href="{% url 'rumahbelajar:detail_presensi' kelas_id=presensi.kelas.id %}" class="btn btn-primary">🔍 Detail</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <footer>
+      <p>&copy; 2025 Sistem Absensi Bimbel | All Rights Reserved</p>
+    </footer>
+  </div>
+
+  <!-- Script -->
+  <script>
+    function showDetail() {
+      document.querySelector('.detail-presensi').style.display = 'block';
+    }
+
+    function toggleStatus(button) {
+      const row = button.closest('tr');
+      const hadirButton = row.querySelector('.status-btn.hadir');
+      const tidakHadirButton = row.querySelector('.status-btn.tidak-hadir');
+      const statusBadge = row.querySelector('.badge');
+
+      if (button.classList.contains('hadir')) {
+        statusBadge.textContent = "Hadir";
+        statusBadge.className = "badge bg-success";
+        hadirButton.classList.add('d-none');
+        tidakHadirButton.classList.remove('d-none');
+      } else {
+        statusBadge.textContent = "Tidak Hadir";
+        statusBadge.className = "badge bg-danger";
+        hadirButton.classList.remove('d-none');
+        tidakHadirButton.classList.add('d-none');
+      }
+    }
+  </script>
+</body>
+
+</html>

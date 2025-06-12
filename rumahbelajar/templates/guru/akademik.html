@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -79,6 +80,7 @@
                 opacity: 0;
                 transform: translateY(10px);
             }
+
             100% {
                 opacity: 1;
                 transform: translateY(0);
@@ -97,6 +99,7 @@
                 opacity: 0;
                 transform: translateX(-20px);
             }
+
             100% {
                 opacity: 1;
                 transform: translateX(0);
@@ -137,6 +140,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- Sidebar -->
@@ -145,14 +149,12 @@
             <h2>Menu Guru</h2>
         </div>
         <ul class="sidebar-menu">
-            <li><a href="{% url 'rumahbelajar:home' %}">🏠 Beranda</a></li>
-            <li><a href="{% url 'rumahbelajar:daftar_siswa' %}">📋 Daftar Siswa</a></li> <!-- Menu Daftar Siswa -->
+            <li><a href="{% url 'rumahbelajar:dashboard_guru' %}">🏠 Beranda</a></li>
+            <li><a href="{% url 'rumahbelajar:daftar_siswa' %}">📋 Daftar Siswa</a></li>
             <li><a href="{% url 'rumahbelajar:akademik' %}">📚 Akademik</a></li>
-            <li><a href="#">📝 Presensi Guru</a></li>
-            <li><a href="#">📝 Presensi Siswa</a>
-            </li>
-            </li>
-            <li><a href="{% url 'rumahbelajar:logout' %}">🚪 Logout</a></li>
+            <li><a href="{% url 'rumahbelajar:presensi_guru' %}">📝 Presensi Guru</a></li>
+            <li><a href="{% url 'rumahbelajar:presensi_siswa'  %}">📝Presensi Siswa</a></li>
+            <li><a href="{% url 'rumahbelajar:login' %}">🚪 Logout</a></li>
         </ul>
     </nav>
 
@@ -179,7 +181,14 @@
                     <tr>
                         <td>{{ forloop.counter }}</td>
                         <td>{{ kelas.nama }}</td>
-                        <td>{{ kelas.mata_pelajaran }}</td>
+                        <td>
+                            {% for mp in kelas.mata_pelajaran.all %}
+                            {{ mp.nama_pelajaran }}<br>
+                            {% empty %}
+                            Tidak ada mata pelajaran
+                            {% endfor %}
+                        </td>
+
                     </tr>
                     {% empty %}
                     <tr>
@@ -196,4 +205,5 @@
     </div>
 
 </body>
+
 </html>

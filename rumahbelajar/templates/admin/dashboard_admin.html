@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard Admin</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
@@ -14,74 +15,86 @@
 
     body {
       font-family: 'Segoe UI', sans-serif;
-      display: flex;
-      min-height: 100vh;
       background-color: #f4f6f8;
-      overflow-x: hidden;
     }
 
-    .sidebar {
-      width: 260px;
-      background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-      color: white;
-      padding: 20px;
-      position: fixed;
-      height: 100%;
-      box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+    .container {
+      display: flex;
+      flex-direction: row;
+      min-height: 100vh;
     }
 
-    .sidebar h2 {
-      font-size: 1.8rem;
-      text-align: center;
-      margin-bottom: 30px;
-    }
+    nav.sidebar {
+            width: 260px;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            padding: 20px;
+            position: fixed;
+            height: 100%;
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+            top: 0;
+            left: 0;
+            z-index: 999;
+        }
 
-    .sidebar a {
-      color: white;
-      text-decoration: none;
-      padding: 10px 15px;
-      display: block;
-      border-radius: 10px;
-      transition: all 0.3s ease-in-out;
-      font-weight: 500;
-      margin-bottom: 10px;
-    }
+        .sidebar h2 {
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 30px;
+        }
 
-    .sidebar a:hover {
-      background-color: rgba(255, 255, 255, 0.2);
-      transform: translateX(5px);
-    }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            display: block;
+            border-radius: 10px;
+            transition: all 0.3s ease-in-out;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .sidebar a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
 
     .main-content {
       margin-left: 260px;
       flex: 1;
-      padding: 40px;
+      padding: 40px 20px;
     }
 
     .header {
       background-color: #ffffff;
       padding: 1rem 2rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
       font-size: 1.5rem;
       font-weight: bold;
       color: #1e3a8a;
       margin-bottom: 30px;
+      border-radius: 10px;
     }
 
     .info-boxes {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 20px;
       margin-bottom: 40px;
-      flex-wrap: wrap;
     }
 
     .info-box {
       background-color: #fff;
       padding: 20px;
       border-radius: 12px;
-      flex: 1;
-      min-width: 200px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
       text-align: center;
     }
 
@@ -96,85 +109,167 @@
       color: #333;
     }
 
-    canvas {
-      max-width: 100%;
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 300px;
       background-color: #fff;
-      border-radius: 12px;
       padding: 20px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .menu-toggle {
+      display: none;
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
+      background-color: #1e3a8a;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
     }
 
     @media (max-width: 768px) {
       .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
+        transform: translateX(-100%);
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        z-index: 999;
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
       }
 
       .main-content {
         margin-left: 0;
-        margin-top: 20px;
-        padding: 20px;
+        padding: 80px 20px 20px;
       }
 
-      .info-boxes {
-        flex-direction: column;
+      .menu-toggle {
+        display: block;
       }
     }
   </style>
 </head>
+
 <body>
 
-  <div class="sidebar">
-    <h2>Admin Panel</h2>
-    <a href="{% url 'keuangan:beranda' %}">📊 Dashboard</a>
-    <a href="{% url 'keuangan:daftar_siswa' %}">👨‍🎓 Data Siswa</a>
-    <a href="{% url 'keuangan:daftar_pemasukan' %}">👨‍👩‍👧 Data Orang Tua</a>
-    <a href="{% url 'keuangan:daftar_pengeluaran' %}">👩‍🏫 Data Guru</a>
-    <a href="#">📝 Presensi Guru</a>
-    <a href="#">📝 Presensi Siswa</a>
-    <a href="{% url 'keuangan:rekap_keuangan' %}">📈 Rekap Keuangan</a>
-    <a href="{% url 'keuangan:kelola_pembayaran' %}">💰 Kelola Pembayaran</a>
-  </div>
+  <button class="menu-toggle" onclick="toggleSidebar()">☰ Menu</button>
 
-  <div class="main-content">
-    <div class="header">
-      Dashboard Admin Rumah Belajar
+  <div class="container">
+    <nav class="sidebar" id="sidebar">
+      <h2>Admin Panel</h2>
+      <ul>
+        <li><a href="{% url 'rumahbelajar:dashboard_admin' %}">📊 Dashboard</a></li>
+        <li><a href="{% url 'rumahbelajar:data_siswa' %}">👨‍🎓 Data Siswa</a></li>
+        <li><a href="{% url 'rumahbelajar:data_orang_tua' %}">👨‍👩‍👧 Data Orang Tua</a></li>
+        <li><a href="{% url 'rumahbelajar:data_guru_admin' %}">👩‍🏫 Data Guru</a></li>
+        <li><a href="{% url 'rumahbelajar:kelas' %}">🏫 Data Kelas</a></li>
+        <li><a href="{% url 'rumahbelajar:mata_pelajaran_admin' %}">📚 Data Mata Pelajaran</a></li>
+        <li><a href="{% url 'rumahbelajar:presensi_guru_admin' %}">📝 Presensi Guru</a></li>
+        <li><a href="{% url 'rumahbelajar:generate_admin_qrcode' %}">📝 QR Code Guru</a></li>
+        <li><a href="{% url 'rumahbelajar:tambah_presensi' %}">📝 Tambah Presensi</a></li>
+        <li><a href="{% url 'keuangan:rekap_keuangan' %}">📈 Rekap Keuangan</a></li>
+        <li><a href="{% url 'rumahbelajar:presensi_siswa_admin' %}">📝 Presensi Siswa</a></li>
+        <li><a href="{% url 'keuangan:kelola_pembayaran' %}">💰 Kelola Pembayaran</a></li>
+        <li><a href="{% url 'rumahbelajar:login' %}"><span>🔒</span> Logout</a></li>
+      </ul>
+      
+    </nav>
+
+    <div class="main-content">
+      <div class="header">
+        Dashboard Admin Rumah Belajar
+      </div>
+
+      <div class="info-boxes">
+        <div class="info-box">
+          <h3>{{ jumlah_siswa }}</h3>
+          <p>Jumlah Siswa</p>
+        </div>
+        <div class="info-box">
+          <h3>{{ jumlah_kelas }}</h3>
+          <p>Jumlah Kelas</p>
+        </div>
+        <div class="info-box">
+          <h3>{{ jumlah_mapel }}</h3>
+          <p>Jumlah Mata Pelajaran</p>
+        </div>
+        <div class="info-box">
+          <h3>{{ jumlah_guru }}</h3>
+          <p>Jumlah Guru</p>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <canvas id="statistikChart"></canvas>
+      </div>
     </div>
-
-    <div class="info-boxes">
-      <div class="info-box">
-        <h3>{{ jumlah_siswa }}</h3>
-        <p>Jumlah Siswa</p>
-      </div>
-      <div class="info-box">
-        <h3>{{ jumlah_kelas }}</h3>
-        <p>Jumlah Kelas</p>
-      </div>
-      <div class="info-box">
-        <h3>{{ jumlah_mapel }}</h3>
-        <p>Jumlah Mata Pelajaran</p>
-      </div>
-    </div>
-
-    <canvas id="statistikChart" height="100"></canvas>
   </div>
 
   <script>
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('active');
+  }
+
+  const jumlahSiswa = Number('{{ jumlah_siswa|default:"0" }}');
+  const jumlahKelas = Number('{{ jumlah_kelas|default:"0" }}');
+  const jumlahMapel = Number('{{ jumlah_mapel|default:"0" }}');
+  const jumlahGuru = Number('{{ jumlah_guru|default:"0" }}');
+
+  const ctx = document.getElementById('statistikChart').getContext('2d');
+  const statistikChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Siswa', 'Kelas', 'Mata Pelajaran', 'Guru'],
+      datasets: [{
+        label: 'Jumlah',
+        data: [jumlahSiswa, jumlahKelas, jumlahMapel, jumlahGuru],
+        backgroundColor: ['#3b82f6', '#1e40af', '#60a5fa', '#2563eb'],
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
+
+  <!-- <script>
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('active');
+    }
+
     const ctx = document.getElementById('statistikChart').getContext('2d');
     const statistikChart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['Siswa', 'Kelas', 'Mata Pelajaran'],
+        labels: ['Siswa', 'Kelas', 'Mata Pelajaran', 'Guru'],
         datasets: [{
           label: 'Jumlah',
-          data: [{{ jumlah_siswa }}, {{ jumlah_kelas }}, {{ jumlah_mapel }}],
-          backgroundColor: ['#3b82f6', '#1e40af', '#60a5fa'],
+          data: [{{ jumlah_siswa }}, {{ jumlah_kelas }}, {{ jumlah_mapel }}, {{ jumlah_guru }}],
+          backgroundColor: ['#3b82f6', '#1e40af', '#60a5fa', '#2563eb'],
           borderRadius: 6
         }]
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: { display: false }
         },
@@ -185,7 +280,8 @@
         }
       }
     });
-  </script>
+  </script> -->
 
 </body>
+
 </html>

@@ -1,126 +1,159 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Absensi Siswa</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Jadwal Absensi</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            padding: 20px;
+            display: flex;
+            margin: 0;
         }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 14px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        .sidebar {
+            width: 220px;
+            background-color: #2c3e50;
+            color: white;
+            min-height: 100vh;
+            padding: 20px 0;
         }
 
-        h2 {
+        .sidebar-header {
+            text-align: center;
             margin-bottom: 20px;
-            color: #333;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-menu li {
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .sidebar-menu a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 10px 0;
+        }
+
+        .sidebar-menu a:hover {
+            background-color: #34495e;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+        }
+
+        .main-header h1 {
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
         }
 
-        th, td {
-            padding: 12px;
-            text-align: left;
+        table th, table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
         }
 
-        th {
-            background-color: #1976d2;
+        table th {
+            background-color: #3498db;
             color: white;
         }
 
-        tr:nth-child(even) {
-            background-color: #f1f1f1;
-        }
-
-        .action-menu {
-            position: relative;
-            display: inline-block;
-        }
-
-        .menu-button {
-            background: none;
+        .btn-detail {
+            padding: 6px 12px;
+            background-color: #2ecc71;
+            color: white;
             border: none;
-            cursor: pointer;
-            font-size: 18px;
-            color: #333;
-        }
-
-        .dropdown-menu {
-            display: none;
-            position: absolute;
-            right: 0;
-            background-color: white;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
             border-radius: 8px;
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        .dropdown-menu a {
-            display: block;
-            padding: 10px 16px;
             text-decoration: none;
-            color: #333;
-            font-size: 14px;
         }
 
-        .dropdown-menu a:hover {
-            background-color: #f2f2f2;
+        .btn-detail:hover {
+            background-color: #27ae60;
         }
 
-        .action-menu:hover .dropdown-menu {
-            display: block;
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #888;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <h2>Absensi Siswa</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Pertemuan</th>
-                <th>Tanggal</th>
-                <th>Status</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for pertemuan in pertemuan_list %}
-            <tr>
-                <td>Pertemuan ke-{{ pertemuan.nomor }}</td>
-                <td>{{ pertemuan.tanggal }}</td>
-                <td>{{ pertemuan.status }}</td>
-                <td>
-                    <div class="action-menu">
-                        <button class="menu-button"><i class="fas fa-ellipsis-v"></i></button>
-                        <div class="dropdown-menu">
-                            <a href="{% url 'rumahbelajar:absensi_siswa' siswa.id %}?pertemuan={{ pertemuan.nomor }}">Lihat Detail</a>
-                            <a href="{% url 'rumahbelajar:scan_qr' siswa.id pertemuan.nomor %}">Scan QR</a>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="4">Belum ada data pertemuan.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2>Menu Siswa</h2>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'rumahbelajar:dashboard_Siswa' %}">🏠 Beranda</a></li>
+            <li><a href="{% url 'rumahbelajar:akademik_siswa' %}">📚 Akademik</a></li>
+            <li><a href="{% url 'rumahbelajar:absensi_siswa' %}">📝 Presensi</a></li>
+            <li><a href="{% url 'keuangan:tagihan_spp_siswa' %}">💰 Keuangan</a></li>
+            <li><a href="{% url 'rumahbelajar:logout' %}">🚪 Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="main-content">
+        <div class="main-header">
+            <h1>Daftar Jadwal Presensi</h1>
+        </div>
+
+        <div class="card">
+            {% if jadwal_list %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Mata Pelajaran</th>
+                        <th>Guru</th>
+                        <th>Hari</th>
+                        <th>Jam</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for jadwal in jadwal_list %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ jadwal.mapel.nama }}</td>
+                        <td>{{ jadwal.guru.user.get_full_name }}</td>
+                        <td>{{ jadwal.hari }}</td>
+                        <td>{{ jadwal.jam_mulai }} - {{ jadwal.jam_selesai }}</td>
+                        <td>
+                            <a href="{% url 'rumahbelajar:absensi_detail' jadwal.id %}" class="btn-detail">Lihat Absensi</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>Tidak ada jadwal mengajar yang ditemukan.</p>
+            {% endif %}
+        </div>
+
+        <footer>
+            &copy; {{ year|default:"2025" }} - Sistem Informasi Rumah Belajar
+        </footer>
+    </div>
 </body>
 </html>

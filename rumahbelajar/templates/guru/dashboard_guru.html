@@ -144,12 +144,25 @@
         <h2>Menu Guru</h2>
     </div>
     <ul class="sidebar-menu">
-        <li><a href="{% url 'rumahbelajar:home' %}">🏠 Beranda</a></li>
+        <li><a href="{% url 'rumahbelajar:dashboard_guru' %}">🏠 Beranda</a></li>
         <li><a href="{% url 'rumahbelajar:daftar_siswa' %}">📋 Daftar Siswa</a></li>
         <li><a href="{% url 'rumahbelajar:akademik' %}">📚 Akademik</a></li>
-        <li><a href="#">📝 Presensi Guru</a></li>
-        <li><a href="#">📝 Presensi Siswa</a></li>
-        <li><a href="{% url 'rumahbelajar:logout' %}">🚪 Logout</a></li>
+        <li><a href="{% url 'rumahbelajar:presensi_guru' %}">📝 Presensi Guru</a></li>
+        <a href="{% url 'rumahbelajar:presensi_siswa'  %}">📝Presensi Siswa</a>
+        {% if qr_code %}
+            <li><a href="{% url 'rumahbelajar:generate_daily_qrcode' tanggal=qr_code.tanggal %}" class="btn btn-success">Scan QR Hari Ini</a></li>
+            {% else %}
+            <p>❌ QR Code belum dibuat untuk hari ini.</p>
+            {% endif %}
+
+
+        {% if jadwal_id and pertemuan %}
+            <li>
+                <a href="{% url 'rumahbelajar:generate_qr_guru' jadwal_id pertemuan %}">📝 QR ABSEN</a>
+            </li>
+        {% endif %}
+
+        <li><a href="{% url 'rumahbelajar:login' %}">🚪 Logout</a></li>
     </ul>
 </nav>
 

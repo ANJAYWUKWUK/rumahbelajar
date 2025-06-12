@@ -1,0 +1,318 @@
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Rekap Keuangan SPP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f6f8;
+    }
+
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    nav.sidebar {
+      width: 260px;
+      background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+      color: white;
+      padding: 20px;
+      position: fixed;
+      height: 100%;
+      box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+      overflow-y: auto;
+      z-index: 999;
+    }
+
+    .sidebar h2 {
+      font-size: 1.8rem;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      padding: 10px 15px;
+      display: block;
+      border-radius: 10px;
+      transition: all 0.3s ease-in-out;
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+
+    .sidebar a:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      transform: translateX(5px);
+    }
+
+    .menu-toggle {
+      display: none;
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
+      background-color: #1e3a8a;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+    }
+
+    .content {
+      margin-left: 260px;
+      flex: 1;
+      padding: 40px 20px;
+    }
+
+      .header {
+      background-color: #ffffff;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #1e3a8a;
+      margin-bottom: 30px;
+      border-radius: 10px;
+    }
+
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+    }
+
+    th {
+      background-color: #007bff;
+      color: white;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    tr:hover {
+      background-color: #f9f9f9;
+    }
+
+    .toggle-btn {
+      cursor: pointer;
+      color: #007bff;
+      text-decoration: none;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: color 0.3s;
+    }
+
+    .toggle-btn:hover {
+      color: #0056b3;
+    }
+
+    .toggle-btn svg {
+      transition: transform 0.3s ease;
+    }
+
+    .detail-row {
+      transition: all 0.3s ease;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .detail {
+      background-color: #fdfdfd;
+      padding: 20px;
+    }
+
+    .detail table {
+      margin-top: 10px;
+      width: 100%;
+      background: #fafafa;
+      border-radius: 6px;
+    }
+
+    .detail th {
+      background-color: #6c757d;
+      color: white;
+    }
+
+    .detail td, .detail th {
+      padding: 10px;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+
+      .content {
+        margin-left: 0;
+        padding-top: 80px;
+      }
+
+      th, td {
+        padding: 10px;
+        font-size: 14px;
+      }
+
+      .toggle-btn {
+        font-size: 14px;
+      }
+
+      .detail {
+        padding: 10px;
+      }
+    }
+  </style>
+
+  <script>
+    function toggleDetail(id) {
+      const detailRow = document.getElementById("detail-" + id);
+      const isHidden = detailRow.classList.contains("hidden");
+
+      // Tutup semua detail terlebih dahulu
+      document.querySelectorAll(".detail-row").forEach(row => row.classList.add("hidden"));
+      document.querySelectorAll(".toggle-btn svg").forEach(icon => icon.style.transform = "rotate(0deg)");
+
+      if (isHidden) {
+        detailRow.classList.remove("hidden");
+        const icon = document.querySelector(`#icon-${id}`);
+        if (icon) icon.style.transform = "rotate(90deg)";
+      }
+    }
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById("sidebar");
+      sidebar.classList.toggle("open");
+    }
+  </script>
+</head>
+<body>
+
+  <button class="menu-toggle" onclick="toggleSidebar()">☰ Menu</button>
+
+  <div class="container">
+    <nav class="sidebar" id="sidebar">
+      <h2>Admin Panel</h2>
+      <ul>
+        <li><a href="{% url 'rumahbelajar:dashboard_admin' %}">📊 Dashboard</a></li>
+        <li><a href="{% url 'rumahbelajar:data_siswa' %}">👨‍🎓 Data Siswa</a></li>
+        <li><a href="{% url 'rumahbelajar:data_orang_tua' %}">👨‍👩‍👧 Data Orang Tua</a></li>
+        <li><a href="{% url 'rumahbelajar:data_guru_admin' %}">👩‍🏫 Data Guru</a></li>
+        <li><a href="{% url 'rumahbelajar:kelas' %}">🏫 Data Kelas</a></li>
+        <li><a href="{% url 'rumahbelajar:mata_pelajaran_admin' %}">📚 Data Mata Pelajaran</a></li>
+        <li><a href="{% url 'rumahbelajar:presensi_guru_admin' %}">📝 Presensi Guru</a></li>
+        <li><a href="{% url 'rumahbelajar:generate_admin_qrcode' %}">📝 QR Code Guru</a></li>
+        <li><a href="{% url 'rumahbelajar:tambah_presensi' %}">📝 Tambah Presensi</a></li>
+        <li><a href="{% url 'keuangan:rekap_keuangan' %}">📈 Rekap Keuangan</a></li>
+        <li><a href="{% url 'rumahbelajar:presensi_siswa_admin' %}">📝 Presensi Siswa</a></li>
+        <li><a href="{% url 'keuangan:kelola_pembayaran' %}">💰 Kelola Pembayaran</a></li>
+        <li><a href="{% url 'rumahbelajar:login' %}">🔒 Logout</a></li>
+      </ul>
+    </nav>
+
+    <div class="content">
+      <h2>Rekap Keuangan SPP per Kelas</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Kelas</th>
+            <th>Jumlah Siswa</th>
+            <th>Total SPP</th>
+            <th>Total Bayar</th>
+            <th>Selisih</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for kelas in rekap_kelas %}
+          <tr>
+            <td style="text-align:center">{{ kelas.kelas }}</td>
+            <td style="text-align:center">{{ kelas.jumlah_siswa }}</td>
+            <td style="text-align:center">Rp{{ kelas.total_spp|default:0|intcomma }}</td>
+            <td style="text-align:center">Rp{{ kelas.total_bayar|default:0|intcomma }}</td>
+            <td style="text-align:center">Rp{{ kelas.selisih|default:0|intcomma }}</td>
+            <td style="text-align:center">
+              <span class="toggle-btn" onclick="toggleDetail('{{ kelas.kelas|slugify }}')">
+                <svg id="icon-{{ kelas.kelas|slugify }}" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path fill="#007bff" d="M8 5v14l11-7z"/></svg>
+                Lihat Detail
+              </span>
+            </td>
+          </tr>
+          <tr id="detail-{{ kelas.kelas|slugify }}" class="detail-row hidden">
+            <td colspan="6" class="detail">
+              <strong>Detail Pembayaran Siswa:</strong>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nama Siswa</th>
+                    <th>Total Tagihan</th>
+                    <th>Total Bayar</th>
+                    <th>Selisih</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for siswa in kelas.detail_siswa %}
+                  <tr>
+                    <td>{{ siswa.nama }}</td>
+                    <td>Rp{{ siswa.total_spp|intcomma }}</td>
+                    <td>Rp{{ siswa.total_bayar|intcomma }}</td>
+                    <td>Rp{{ siswa.selisih|intcomma }}</td>
+                  </tr>
+                  {% empty %}
+                  <tr>
+                    <td colspan="4">Belum ada data siswa.</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</body>
+</html>

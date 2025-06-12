@@ -1,0 +1,208 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Mata Pelajaran</title>
+    <link rel="stylesheet" href="{% static 'css/dashboard_siswa.css' %}">
+    <style>
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            min-height: 100vh;
+            background: #f3f4f6;
+            color: #111827;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            padding: 20px;
+            position: fixed;
+            height: 100%;
+            transition: all 0.4s ease-in-out;
+            z-index: 100;
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin: 15px 0;
+        }
+
+        .sidebar-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            display: block;
+            border-radius: 10px;
+            transition: all 0.3s ease-in-out;
+            font-weight: 500;
+        }
+
+        .sidebar-menu a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            padding: 40px;
+            flex: 1;
+            animation: fadeInMain 0.8s ease-in-out;
+        }
+
+        @keyframes fadeInMain {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .main-header h1 {
+            font-size: 2rem;
+            color: #1e3a8a;
+            margin-bottom: 25px;
+            animation: slideInLeft 0.7s ease-in-out;
+        }
+
+        @keyframes slideInLeft {
+            0% {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* List Mapel */
+        ul.mata-pelajaran-list {
+            list-style: none;
+            padding: 0;
+            animation: fadeInList 0.6s ease-in-out;
+        }
+
+        @keyframes fadeInList {
+            0% {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        ul.mata-pelajaran-list li {
+            background: #ffffff;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            padding: 18px 24px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        ul.mata-pelajaran-list li:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        ul.mata-pelajaran-list li a {
+            text-decoration: none;
+            color: #1e3a8a;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: block;
+            transition: color 0.3s ease;
+        }
+
+        ul.mata-pelajaran-list li a:hover {
+            color: #2563eb;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding: 10px;
+            }
+
+            .main-content {
+                margin-left: 0;
+                margin-top: 20px;
+                padding: 20px;
+            }
+
+            .main-header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2>Menu Siswa</h2>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'rumahbelajar:dashboard_Siswa' %}">🏠 Beranda</a></li>
+            <li><a href="{% url 'rumahbelajar:akademik_siswa' %}">📚 Akademik</a></li>
+            <li><a href="{% url 'rumahbelajar:absensi_siswa' %}">📝 Presensi</a></li>
+            <li><a href="{% url 'keuangan:tagihan_spp_siswa' %}">💰 Keuangan</a></li>
+            <li><a href="{% url 'rumahbelajar:logout' %}">🚪 Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="main-header">
+            <h1>Daftar Mata Pelajaran</h1>
+        </div>
+
+        <ul class="mata-pelajaran-list">
+            {% for mapel in mata_pelajaran_list %}
+                <li>
+                    <a href="{% url 'rumahbelajar:absensi_detail' mapel.id %}">
+                        {{ mapel.nama_pelajaran }} ({{ mapel.kode_pelajaran }})
+                    </a>
+                </li>
+            {% empty %}
+                <li>Tidak ada mata pelajaran ditemukan.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+</body>
+</html>

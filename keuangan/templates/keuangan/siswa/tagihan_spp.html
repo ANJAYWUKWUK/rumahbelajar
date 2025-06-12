@@ -1,18 +1,66 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Tagihan SPP</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(to right, #e0eafc, #cfdef3);
-            padding: 40px;
+            padding: 40px 20px 40px 300px; /* menyesuaikan sidebar */
             margin: 0;
             animation: fadeIn 1s ease-in;
         }
-    
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            padding: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeIn 1s ease-in-out;
+            color: #ffffff;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            margin: 15px 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            text-decoration: none;
+            padding: 10px 12px;
+            border-radius: 10px;
+            transition: all 0.3s ease-in-out;
+            font-weight: 500;
+        }
+
+        .sidebar-menu a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+
         h2 {
             text-align: center;
             color: #2c3e50;
@@ -20,7 +68,7 @@
             margin-bottom: 30px;
             animation: slideDown 1s ease-out;
         }
-    
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -30,75 +78,56 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             animation: fadeInUp 0.8s ease-out;
         }
-    
+
         th, td {
             padding: 15px 20px;
             text-align: center;
             font-size: 1em;
         }
-    
+
         thead {
             background-color: #3498db;
             color: white;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-    
-        tbody tr {
-            transition: background-color 0.3s ease;
-        }
-    
+
         tbody tr:hover {
             background-color: #f0f9ff;
         }
-    
-        td a {
+
+        a {
             color: #2980b9;
             text-decoration: none;
             font-weight: bold;
-            transition: color 0.3s;
         }
-    
-        td a:hover {
+
+        a:hover {
             color: #1abc9c;
         }
-    
+
         input[type="file"] {
-            padding: 6px;
-            font-size: 0.9em;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            background-color: #f9f9f9;
-            transition: border-color 0.3s ease;
+            margin-bottom: 5px;
         }
-    
-        input[type="file"]:hover {
-            border-color: #3498db;
-        }
-    
+
         button {
-            margin-top: 6px;
-            padding: 8px 14px;
-            background-color: #2ecc71;
-            border: none;
-            border-radius: 6px;
+            background-color: #3498db;
             color: white;
-            font-weight: bold;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s;
         }
-    
+
         button:hover {
-            background-color: #27ae60;
-            transform: scale(1.05);
+            background-color: #2980b9;
         }
-    
-        /* Animations */
+
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
-    
+
         @keyframes slideDown {
             from {
                 transform: translateY(-20px);
@@ -109,7 +138,7 @@
                 opacity: 1;
             }
         }
-    
+
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -120,17 +149,37 @@
                 transform: translateY(0);
             }
         }
-    
-        /* Responsive */
+
         @media (max-width: 768px) {
+            body {
+                padding: 100px 20px;
+            }
+
+            .sidebar {
+                position: static;
+                width: 100%;
+                height: auto;
+                box-shadow: none;
+            }
+
+            .sidebar-menu {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .sidebar-menu li {
+                margin: 10px;
+            }
+
             table, thead, tbody, th, td, tr {
                 display: block;
             }
-    
+
             thead {
                 display: none;
             }
-    
+
             tr {
                 margin-bottom: 15px;
                 background-color: #fff;
@@ -138,13 +187,13 @@
                 box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
                 padding: 12px;
             }
-    
+
             td {
                 text-align: left;
                 padding: 10px 15px;
                 position: relative;
             }
-    
+
             td:before {
                 content: attr(data-label);
                 position: absolute;
@@ -154,60 +203,65 @@
                 text-transform: uppercase;
                 color: #888;
             }
-    
-            td input[type="file"], td button {
-                width: 100%;
-            }
         }
     </style>
 </head>
 <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2>Menu Siswa</h2>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'rumahbelajar:dashboard_Siswa' %}">🏠 Beranda</a></li>
+            <li><a href="{% url 'rumahbelajar:akademik_siswa' %}">📚 Akademik</a></li>
+            <li><a href="{% url 'rumahbelajar:absensi_siswa' %}">📝 Presensi</a></li>
+            <li><a href="{% url 'keuangan:tagihan_spp_siswa' %}">💰 Keuangan</a></li>
+            <li><a href="{% url 'rumahbelajar:logout' %}">🚪 Logout</a></li>
+        </ul>
+    </nav>
 
-{% block content %}
-<h2>Tagihan SPP {{ request.user.username }}</h2>
+    <!-- Konten -->
+    <h2>Tagihan SPP {{ request.user.username }}</h2>
 
-<table border="1" cellpadding="8">
-    <thead>
-        <tr>
-            <th>Bulan</th>
-            <th>Jumlah</th>
-            <th>Status</th>
-            <th>Tanggal Bayar</th>
-            <th>Bukti Pembayaran</th>
-            <th>Upload Bukti</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for bayar in pembayaran_list %}
-        <tr>
-            <td>{{ bayar.get_bulan_display }}</td>
-            <td>Rp{{ bayar.jumlah_bayar }}</td>
-            <td>{{ bayar.status_bayar }}</td>
-            <td>{{ bayar.tanggal_bayar }}</td>
-            <td>
-                {% if bayar.bukti_pembayaran %}
-                    <a href="{{ bayar.bukti_pembayaran.url }}" target="_blank">Lihat</a>
-                {% else %}
-                    Belum Ada
-                {% endif %}
-            </td>
-            <td>
-                {% if bayar.status_bayar == 'belum lunas' %}
-                <form method="POST" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <input type="hidden" name="pembayaran_id" value="{{ bayar.id }}">
-                    {{ form.bukti_pembayaran }}
-                    <button type="submit">Upload</button>
-                </form>
-                {% else %}
-                    -
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% endblock %}
-
+    <table>
+        <thead>
+            <tr>
+                <th>Bulan</th>
+                <th>Jumlah</th>
+                <th>Status</th>
+                <th>Tanggal Bayar</th>
+                <th>Bukti Pembayaran</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bayar in pembayaran_list %}
+            <tr>
+                <td data-label="Bulan">{{ bayar.bulan_nama }}</td>
+                <td data-label="Jumlah">Rp{{ bayar.jumlah_bayar }}</td>
+                <td data-label="Status">{{ bayar.status_bayar }}</td>
+                <td data-label="Tanggal Bayar">
+                    {% if bayar.tanggal_bayar %}
+                        {{ bayar.tanggal_bayar|date:"d M Y" }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td data-label="Bukti">
+                    {% if bayar.bukti_pembayaran %}
+                        <a href="{{ bayar.bukti_pembayaran.url }}" target="_blank">Lihat</a>
+                    {% else %}
+                        <form method="post" action="{% url 'keuangan:tagihan_spp_siswa' %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="hidden" name="bulan_kode" value="{{ bayar.bulan_kode }}">
+                            <input type="file" name="bukti_pembayaran" accept="image/*" required>
+                            <button type="submit">Upload</button>
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>

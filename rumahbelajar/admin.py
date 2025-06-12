@@ -1,36 +1,79 @@
 from django.contrib import admin
-from .models import OrangTua, Siswa, Guru, JadwalLes, Absensi
-from .models import Kelas
+from .models import (
+    OrangTua, Siswa, Guru, JadwalLes, Absensi,
+    Kelas, MataPelajaran, Presensi, PresensiSiswa, PresensiGuru
+)
 
-admin.site.register(Kelas)
-
-# Pendaftaran model OrangTua
 @admin.register(OrangTua)
 class OrangTuaAdmin(admin.ModelAdmin):
-    list_display = ['nama', 'user', 'no_telp']
-    search_fields = ['nama', 'user__username']
+    list_display = ('nama', 'no_telp', 'alamat')
+    search_fields = ('nama',)
 
-# Pendaftaran model Siswa
 @admin.register(Siswa)
 class SiswaAdmin(admin.ModelAdmin):
-    list_display = ['nama', 'user', 'orang_tua', 'tanggal_lahir', 'jenis_kelamin']
-    search_fields = ['nama', 'user__username']
-    list_filter = ['jenis_kelamin']
+    list_display = ('nama', 'tanggal_lahir', 'jenis_kelamin', 'orang_tua')
+    search_fields = ('nama',)
+    list_filter = ('jenis_kelamin',)
 
-# Pendaftaran model Guru
 @admin.register(Guru)
 class GuruAdmin(admin.ModelAdmin):
-    list_display = ['nama', 'user', 'no_telp', 'mata_pelajaran']
-    search_fields = ['nama', 'mata_pelajaran']
+    list_display = ['nama']
 
+@admin.register(JadwalLes)
 class JadwalLesAdmin(admin.ModelAdmin):
-    list_display = ('hari', 'jam', 'guru')  # pastikan 'jam' dan 'guru' ada di model
-    list_filter = ('guru',)
+    list_display = ('hari', 'jam', 'guru')
+    list_filter = ('hari',)
+    search_fields = ('guru__nama',)
 
-admin.site.register(JadwalLes, JadwalLesAdmin)
-# Pendaftaran model Absensi
 @admin.register(Absensi)
 class AbsensiAdmin(admin.ModelAdmin):
-    list_display = ['tanggal', 'siswa', 'guru', 'status', 'metode_absensi']
-    list_filter = ['status', 'metode_absensi', 'tanggal']
-    search_fields = ['siswa__nama', 'guru__nama']
+    list_display = ('siswa', 'guru', 'tanggal', 'status', 'metode_absensi','jam_absensi')
+    list_filter = ('status', 'metode_absensi', 'tanggal','jam_absensi')
+    search_fields = ('siswa__nama', 'guru__nama')
+
+@admin.register(Kelas)
+class KelasAdmin(admin.ModelAdmin):
+    list_display = ('nama',)
+    search_fields = ('nama',)
+
+@admin.register(MataPelajaran)
+class MataPelajaranAdmin(admin.ModelAdmin):
+    list_display = ('nama_pelajaran', 'kelas', 'kode_pelajaran')
+    search_fields = ('nama_pelajaran',)
+
+@admin.register(Presensi)
+class PresensiAdmin(admin.ModelAdmin):
+    list_display = ('get_kode_mapel', 'get_nama_mapel', 'get_kelas', 'hari', 'jam')
+    search_fields = ('mata_pelajaran__nama_pelajaran', 'kelas__nama')
+
+    def get_kode_mapel(self, obj):
+        return obj.mata_pelajaran.id
+    get_kode_mapel.short_description = 'Kode Mapel'
+
+    def get_nama_mapel(self, obj):
+        return obj.mata_pelajaran.nama_pelajaran
+    get_nama_mapel.short_description = 'Nama Mapel'
+
+    def get_kelas(self, obj):
+        return obj.kelas.nama
+    get_kelas.short_description = 'Kelas'
+
+@admin.register(PresensiSiswa)
+class PresensiSiswaAdmin(admin.ModelAdmin):
+    list_display = ('siswa', 'get_nama_mapel', 'status', 'waktu_presensi')
+    list_filter = ('status',)
+    search_fields = ('siswa__nama', 'presensi__mata_pelajaran__nama_pelajaran')
+
+    def get_nama_mapel(self, obj):
+        return obj.presensi.mata_pelajaran.nama_pelajaran
+    get_nama_mapel.short_description = 'Mata Pelajaran'
+
+
+class PresensiGuruAdmin(admin.ModelAdmin):
+    list_display = ('guru', 'tanggal', 'jam_masuk', 'status')
+    list_filter = ('status', 'tanggal')
+    search_fields = ('guru__nama',)
+    ordering = ('-tanggal', '-jam_masuk')
+    date_hierarchy = 'tanggal'
+
+admin.site.register(PresensiGuru, PresensiGuruAdmin)

@@ -1,0 +1,261 @@
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Gaji Guru</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            min-height: 100vh;
+            background: #f4f4f4;
+        }
+
+        .sidebar {
+            width: 220px;
+            background-color: #2c3e50;
+            color: white;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: fixed;
+        }
+
+        .sidebar-header {
+            font-size: 18px;
+            font-weight: bold;
+            padding: 15px 20px;
+            background: #1a252f;
+            text-transform: uppercase;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            border-bottom: 1px solid #34495e;
+        }
+
+        .sidebar-menu a {
+            display: block;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .sidebar-menu a:hover {
+            background-color: #34495e;
+        }
+
+        .main-content {
+            margin-left: 220px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: #fff;
+            padding: 10px 20px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        header h2 {
+            margin: 0;
+            color: #333;
+        }
+
+        .container {
+            padding: 20px;
+            flex-grow: 1;
+        }
+
+        .panel {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 20px;
+        }
+
+        .panel h3 {
+            background: #2368A2;
+            color: white;
+            padding: 10px;
+            margin: -20px -20px 20px;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        form select, form button {
+            margin-right: 10px;
+            padding: 5px;
+        }
+
+        .alert {
+            background: #dff0d8;
+            color: #3c763d;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #d6e9c6;
+            border-radius: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .btn-cetak {
+            background: #e74c3c;
+            color: white;
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .btn-green {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        footer a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        @media screen and (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+   <!-- Sidebar -->
+   <nav class="sidebar">
+       <div class="sidebar-header">
+           <h2>Menu Guru</h2>
+       </div>
+       <ul class="sidebar-menu">
+           <li><a href="{% url 'rumahbelajar:home' %}">🏠 Beranda</a></li>
+           <li><a href="{% url 'rumahbelajar:daftar_siswa' %}">📋 Daftar Siswa</a></li>
+           <li><a href="{% url 'rumahbelajar:akademik' %}">📚 Akademik</a></li>
+           <li><a href="#">📝 Presensi Guru</a></li>
+           <li><a href="#">📝 Presensi Siswa</a></li>
+           <li><a href="{% url 'keuangan:daftar_gaji' %}">💳 Gaji Guru</a></li> 
+           <li><a href="{% url 'rumahbelajar:logout' %}">🚪 Logout</a></li>
+       </ul>
+   </nav>
+
+   <!-- Main Content -->
+   <div class="main-content">
+       <header>
+           <h2>Gaji Guru</h2>
+       </header>
+
+       <main class="container">
+           <div class="panel">
+               <h3>Daftar Gaji Guru</h3>
+               <form method="get">
+                   <label>Bulan:
+                       <select name="bulan">
+                           <option>- Pilih -</option>
+                           {% for b in bulan_list %}
+                               <option value="{{ b }}" {% if b == bulan %}selected{% endif %}>{{ b }}</option>
+                           {% endfor %}
+                       </select>
+                   </label>
+                   <label>Tahun:
+                       <select name="tahun">
+                           <option>- Pilih -</option>
+                           {% for t in tahun_list %}
+                               <option value="{{ t }}" {% if t == tahun %}selected{% endif %}>{{ t }}</option>
+                           {% endfor %}
+                       </select>
+                   </label>
+                   <button type="submit">Tampilkan Data</button>
+               </form>
+
+               {% if bulan and tahun %}
+               <div class="alert">
+                   Gaji Guru - Bulan: {{ bulan }}, Tahun: {{ tahun }}
+               </div>
+               {% endif %}
+
+               <table>
+                   <thead>
+                       <tr>
+                           <th>No</th>
+                           <th>NIP</th>
+                           <th>Nama Guru</th>
+                           <th>Jabatan</th>
+                           <th>Gol</th>
+                           <th>No. Rekening</th>
+                           <th>Nominal Gaji</th>
+                           <th>Slip Gaji</th>
+                       </tr>
+                   </thead>
+                   <tbody>
+                       {% for pegawai in daftar_gaji %}
+                       <tr>
+                           <td>{{ forloop.counter }}</td>
+                           <td>{{ pegawai.nip }}</td>
+                           <td>{{ pegawai.nama }}</td>
+                           <td>{{ pegawai.jabatan }}</td>
+                           <td>{{ pegawai.gol }}</td>
+                           <td>{{ pegawai.no_rekening }}</td>
+                           <td>Rp.{{ pegawai.nominal_gaji|intcomma }}</td>
+                           <td><a href="{% url 'keuangan:cetak_slip' pegawai.id %}" class="btn-cetak">Cetak</a></td>
+                       </tr>
+                       {% empty %}
+                       <tr>
+                           <td colspan="8" style="text-align:center;">Data tidak ditemukan</td>
+                       </tr>
+                       {% endfor %}
+                   </tbody>
+               </table>
+
+               <button class="btn-green">Cetak Gaji Guru</button>
+                <button onclick="window.print()">Cetak</button>
+           </div>
+       </main>
+
+       <footer>
+           <p><a href="https://Luruilmu.com">Luruilmu.com</a> Tahun 2020</p>
+       </footer>
+   </div>
+</body>
+</html>

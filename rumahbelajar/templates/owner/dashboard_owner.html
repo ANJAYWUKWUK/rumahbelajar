@@ -1,0 +1,142 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Owner</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            height: 100vh;
+            background: #f3f4f6;
+            color: #111827;
+            overflow-x: hidden;
+        }
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            padding: 20px;
+            position: fixed;
+            height: 100%;
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+        }
+        .sidebar-header {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+        .sidebar-menu {
+            list-style: none;
+        }
+        .sidebar-menu li {
+            margin: 15px 0;
+        }
+        .sidebar-menu li a {
+            text-decoration: none;
+            color: white;
+            padding: 10px 15px;
+            display: block;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease-in-out;
+        }
+        .sidebar-menu li a:hover {
+            background-color: rgba(255,255,255,0.2);
+            transform: translateX(5px);
+        }
+        .main-content {
+            margin-left: 260px;
+            padding: 40px;
+            flex-grow: 1;
+        }
+        .main-header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            color: #1e3a8a;
+        }
+        .dashboard-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+        .card {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .card.clickable {
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .card.clickable:hover {
+            background-color: #e5f0ff;
+            transform: translateY(-2px);
+        }
+        .card h3 {
+            color: #1e3a8a;
+            margin-bottom: 10px;
+        }
+        .card p {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #111827;
+        }
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <div class="sidebar-header">Owner Panel</div>
+    <ul class="sidebar-menu">
+        <li><a href="{% url 'rumahbelajar:dashboard_owner' %}">🏠 Dashboard</a></li>
+        <li><a href="{% url 'rumahbelajar:owner_siswa' %}">👨‍🎓 Data Siswa</a></li>
+        <li><a href="{% url 'rumahbelajar:owner_guru' %}">👩‍🏫 Data Guru</a></li>
+        <li><a href="{% url 'rumahbelajar:owner_mapel' %}">👩‍🏫 Data Mapel</a></li>
+        <li><a href="{% url 'rumahbelajar:owner_orangtua' %}">👩‍🏫 Data Orang Tua</a></li>
+       <li><a href="{% url 'keuangan:rekap_keuangan_owner' %}">📈 Rekap Keuangan</a></li>
+        <li><a href="{% url 'rumahbelajar:login' %}"><span>🔒</span> Logout</a></li>
+    </ul>
+</div>
+<div class="main-content">
+    <div class="main-header">
+        <h1>Hai, {{ request.user.username|default:'Owner' }} 👋</h1>
+        <p>Selamat datang di Dashboard Owner.</p>
+    </div>
+    <div class="dashboard-overview">
+        <div class="card">
+            <h3>👨‍🎓 Jumlah Siswa</h3>
+            <p>{{ jumlah_siswa }}</p>
+        </div>
+        <div class="card">
+            <h3>👩‍🏫 Jumlah Guru</h3>
+            <p>{{ jumlah_guru }}</p>
+        </div>
+        <div class="card">
+            <h3>💰 Total Keuangan</h3>
+            <p>Rp {{ total_keuangan|default:'0' }}</p>
+        </div>
+        <div class="card">
+            <h3>📅 Jumlah Kelas</h3>
+            <p>{{ jumlah_kelas }}</p>
+        </div>
+    </div>
+    <footer>
+        © 2025 Sistem Absensi Bimbel | All Rights Reserved
+    </footer>
+</div>
+</body>
+</html> 

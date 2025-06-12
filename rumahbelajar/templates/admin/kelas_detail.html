@@ -1,0 +1,206 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detail Kelas</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* [masukkan semua style dari sidebar-mu di sini] */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f6f8;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: row;
+      min-height: 100vh;
+    }
+
+    nav.sidebar {
+      width: 260px;
+      background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+      color: white;
+      padding: 20px;
+      position: fixed;
+      height: 100%;
+      box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar h2 {
+      font-size: 1.8rem;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .sidebar ul {
+      list-style: none;
+    }
+
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      padding: 10px 15px;
+      display: block;
+      border-radius: 10px;
+      transition: all 0.3s ease-in-out;
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+
+    .sidebar a:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      transform: translateX(5px);
+    }
+
+    .main-content {
+      margin-left: 260px;
+      flex: 1;
+      padding: 40px 20px;
+    }
+
+    .header {
+      background-color: #ffffff;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #1e3a8a;
+      margin-bottom: 30px;
+      border-radius: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f0f0f0;
+    }
+
+    .menu-toggle {
+      display: none;
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
+      background-color: #1e3a8a;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        z-index: 999;
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 80px 20px 20px;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <button class="menu-toggle" onclick="toggleSidebar()">☰ Menu</button>
+
+  <div class="container">
+    <nav class="sidebar" id="sidebar">
+      <h2>Admin Panel</h2>
+      <ul>
+        <li><a href="{% url 'rumahbelajar:dashboard_admin' %}">📊 Dashboard</a></li>
+        <li><a href="{% url 'rumahbelajar:data_siswa' %}">👨‍🎓 Data Siswa</a></li>
+        <li><a href="{% url 'rumahbelajar:data_orang_tua' %}">👨‍👩‍👧 Data Orang Tua</a></li>
+        <li><a href="{% url 'rumahbelajar:data_guru_admin' %}">👩‍🏫 Data Guru</a></li>
+        <li><a href="{% url 'rumahbelajar:kelas' %}">🏫 Data Kelas</a></li>
+        <li><a href="{% url 'rumahbelajar:mata_pelajaran_admin' %}">📚 Data Mata Pelajaran</a></li>
+        <li><a href="{% url 'rumahbelajar:presensi_guru_admin' %}">📝 Presensi Guru</a></li>
+        <li><a href="{% url 'rumahbelajar:generate_admin_qrcode' %}">📝 QR Code Guru</a></li>
+        <li><a href="{% url 'rumahbelajar:tambah_presensi' %}">📝 Tambah Presensi</a></li>
+        <li><a href="{% url 'keuangan:rekap_keuangan' %}">📈 Rekap Keuangan</a></li>
+        <li><a href="{% url 'rumahbelajar:presensi_siswa_admin' %}">📝 Presensi Siswa</a></li>
+        <li><a href="{% url 'keuangan:kelola_pembayaran' %}">💰 Kelola Pembayaran</a></li>
+        <li><a href="{% url 'rumahbelajar:login' %}"><span>🔒</span> Logout</a></li>
+      </ul>
+    </nav>
+
+    <div class="main-content">
+      <div class="header">Detail Kelas</div>
+
+      <h2>Kelas: {{ kelas.nama }}</h2>
+      <a href="{% url 'rumahbelajar:kelas' %}">← Kembali ke daftar kelas</a>
+
+      <table>
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Nama Siswa</th>
+            <th>Jenis Kelamin</th>
+            <th>Tanggal Lahir</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for siswa in siswa_list %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ siswa.nama }}</td>
+            <td>{{ siswa.jenis_kelamin }}</td>
+            <td>{{ siswa.tanggal_lahir }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4">Tidak ada siswa dalam kelas ini.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('active');
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,200 @@
+{% load dict_extras %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Detail Presensi - {{ jadwal.mapel.nama }} | Tahun {{ year }}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #e8f1fa;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+        .title {
+            background-color: #2196f3;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px 10px 0 0;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .subtitle {
+            margin: 10px 0;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .info-block {
+            width: 45%;
+        }
+        .info-block ul {
+            padding-left: 18px;
+        }
+        .status-hadir {
+            color: green;
+            font-weight: bold;
+        }
+        .status-absen, .status-belum {
+            color: red;
+            font-weight: bold;
+        }
+        .btn-scan {
+            width: 100%;
+            padding: 12px;
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .btn-scan:hover {
+            background-color: #1976d2;
+        }
+        .messages {
+            margin: 10px 0;
+        }
+        .messages .error {
+            color: red;
+        }
+        .messages .success {
+            color: green;
+        }
+        #qr-reader {
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="title">RUMAHBELAJAR - {{ jadwal.mapel.nama|upper }}</div>
+
+    <p class="subtitle">Tahun: {{ year }}</p>
+
+    <!-- Pesan sistem -->
+    <div class="messages">
+        {% for message in messages %}
+            <div class="{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+
+    <!-- Tempat untuk QR Scanner -->
+    <div id="qr-reader"></div>
+
+    {% for pertemuan_num in total_pertemuan %}
+    <div class="card">
+        <div class="info-row">
+            <div class="info-block">
+                <strong>Jadwal Les</strong>
+                <ul>
+                    <li>Pertemuan Ke - {{ pertemuan_num }}</li>
+                </ul>
+            </div>
+            <div class="info-block">
+                <strong>Status Presensi</strong>
+                <ul>
+                    {% if status_pertemuan|default:""|has_key:pertemuan_num %}
+                        {% with status_pertemuan|get_item:pertemuan_num as status %}
+                            {% if status == 'Hadir' %}
+                                <li class="status-hadir">Hadir</li>
+                            {% else %}
+                                <li class="status-absen">{{ status }}</li>
+                            {% endif %}
+                            <li>{{ presensi_waktu|get_item:pertemuan_num|date:"d M Y" }}</li>
+                            <li>{{ presensi_waktu|get_item:pertemuan_num|date:"H:i" }} WIB</li>
+                        {% endwith %}
+                    {% else %}
+                        <li class="status-belum">Belum Absen</li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Form Presensi -->
+        <form method="post" style="margin-top: 20px;">
+            {% csrf_token %}
+            <input type="hidden" name="pertemuan" value="{{ pertemuan_num }}" />
+            <input type="hidden" name="kode_qr" id="kode_qr_{{ pertemuan_num }}" value="" />
+
+            {% if pertemuan_num %}
+                <button type="button" class="btn-scan" onclick="startScan({{ pertemuan_num }})">SCAN QR</button>
+            {% endif %}
+            <button type="submit" style="display:none;" id="submit_btn_{{ pertemuan_num }}">Kirim</button>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Script HTML5 QR Code -->
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script>
+    let html5QrCode;
+    let currentPertemuan = null;
+
+    function startScan(pertemuan) {
+        currentPertemuan = pertemuan;
+        const qrReader = document.getElementById("qr-reader");
+        qrReader.style.display = "block";
+
+        if (html5QrCode) {
+            html5QrCode.clear().then(() => {
+                scanNow();
+            }).catch((err) => {
+                // Handle clear error
+                scanNow();
+            });
+        } else {
+            html5QrCode = new Html5Qrcode("qr-reader");
+            scanNow();
+        }
+    }
+
+    function scanNow() {
+        html5QrCode.start(
+            { facingMode: "environment" }, // Gunakan kamera belakang
+            { fps: 10, qrbox: 250 },
+            (decodedText, decodedResult) => {
+                // Jika berhasil scan
+                document.getElementById("kode_qr_" + currentPertemuan).value = decodedText;
+                document.getElementById("submit_btn_" + currentPertemuan).click();
+
+                html5QrCode.stop().then(() => {
+                    document.getElementById("qr-reader").style.display = "none";
+                    document.getElementById("qr-reader").innerHTML = "";
+                }).catch((err) => {
+                    alert("Gagal menghentikan kamera: " + err);
+                });
+            },
+            (errorMessage) => {
+                // Gagal membaca QR, bisa diabaikan
+            }
+        ).catch((err) => {
+            alert("Tidak bisa mengakses kamera: " + err);
+        });
+    }
+</script>
+
+</body>
+</html>

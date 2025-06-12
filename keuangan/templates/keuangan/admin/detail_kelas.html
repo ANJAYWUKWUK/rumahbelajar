@@ -1,0 +1,32 @@
+<h2>Detail Pembayaran Siswa Kelas {{ kelas }}</h2>
+
+<table border="1">
+  <thead>
+    <tr>
+      <th>Nama Siswa</th>
+      {% for bulan in bulan_list %}
+      <th>{{ bulan }}</th>
+      {% endfor %}
+      <th>Total Sudah Bayar</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for siswa in siswa_data %}
+    <tr>
+      <td>{{ siswa.nama }}</td>
+      {% for status in siswa.status_per_bulan %}
+      <td>
+        {% if status.status == 'Lunas' %}
+          <span style="color: green;">Lunas</span>
+        {% else %}
+          <span style="color: red;">Belum</span>
+        {% endif %}
+      </td>
+      {% endfor %}
+      <td>Rp {{ siswa.total_bayar|intcomma }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a href="{% url 'rekap_keuangan_spp_per_kelas' %}" class="btn btn-secondary mt-3">⬅ Kembali</a>
